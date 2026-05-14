@@ -1,0 +1,116 @@
+{
+  "colors" : [
+    {
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal"
+    },
+    {
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "en"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "en"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "en"
+    },
+    {
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "es-US"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "light"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "es-US"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "color" : {
+        "platform" : "universal",
+        "reference" : "systemBlueColor"
+      },
+      "idiom" : "universal",
+      "locale" : "es-US"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "localizable" : true
+  }
+}
