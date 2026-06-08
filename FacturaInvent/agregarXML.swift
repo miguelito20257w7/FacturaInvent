@@ -32,6 +32,7 @@ struct AgregarXML: View {
     @State private var mostrarExito = false
     @State private var productosGuardados = 0
     @Binding var selectedTab: Int
+    var xmlURLInicial: URL? = nil
 
     private var hayProductos: Bool {
         !productosParaImportar.isEmpty || !productosConflicto.isEmpty
@@ -65,6 +66,11 @@ struct AgregarXML: View {
         .onKeyPress(.escape) {
             appState.showCancelButton = true
             return .handled
+        }
+        .task {
+            if let url = xmlURLInicial {
+                parsearFacturaDesdeURL(url)
+            }
         }
     }
 
@@ -281,101 +287,96 @@ struct AgregarXML: View {
                 return
             }
             defer { url.stopAccessingSecurityScopedResource() }
-
-            do {
-                let contenido = try String(contentsOf: url, encoding: .utf8)
-
-                guard let inicio = contenido.range(of: "<![CDATA["),
-                      let fin   = contenido.range(of: "]]>") else {
-                    print("There was an error parsing the XML (no CDATA tag)")
-                    return
-                }
-
-                let factura = String(contenido[inicio.upperBound..<fin.lowerBound])
-                guard let data = factura.data(using: .utf8) else { return }
-
-                let xmlparser = XMLParser(data: data)
-                let delegado  = XMLFacturaParser()
-                xmlparser.delegate = delegado
-                xmlparser.shouldProcessNamespaces = true
-                xmlparser.parse()
-
-                let codigosBarrasCount  = Dictionary(grouping: delegado.productos, by: { $0.codigoBarras })
-                let codigosFacturaCount = Dictionary(grouping: delegado.productos, by: { $0.codigo })
-
-                let nitBuscado = delegado.nit
-                let descriptor = FetchDescriptor<Empresa>(
-                    predicate: #Predicate { empresa in empresa.nit == nitBuscado }
-                )
-
-                let empresasExistentes = try modelContext.fetch(descriptor)
-
-                if let empresaExistente = empresasExistentes.first {
-                    print("Se encontró la empresa: \(empresaExistente.nombre)")
-                    empresaActual = empresaExistente
-                } else {
-                    let nuevaEmpresa = Empresa(nombre: delegado.nombreEmpresa, nit: delegado.nit)
-                    modelContext.insert(nuevaEmpresa)
-                    print("Se creó una nueva empresa: \(nuevaEmpresa.nombre)")
-                    empresaActual = nuevaEmpresa
-                }
-
-                let productosEmpresa = empresaActual?.productos ?? []
-                print("Productos encontrados en XML: \(delegado.productos.count)")
-
-                for productoData in delegado.productos {
-                    let codigoBuscado  = productoData.codigo
-                    let barrasBuscadas = productoData.codigoBarras
-
-                    print("Empresa: \(delegado.nombreEmpresa) | Nit: \(delegado.nit)")
-                    print("codigo: \(productoData.codigo) | Barras: \(productoData.codigoBarras) | Nombre: \(productoData.nombre) | Precio: \(productoData.precioSinIVA) | Cantidad: \(productoData.cantidad)")
-
-                    if !codigoBuscado.isEmpty {
-                        if let existente = productosEmpresa.first(where: { $0.codigoFactura == codigoBuscado }) {
-                            print("⚠️ Ya existe en DB por código factura: \(existente.nombre) | XML trae: \(productoData.nombre)")
-                            productosConflicto.append(ProductoConflicto(
-                                productoEnDB: existente,
-                                datosNuevos: productoDataAImport(productoData)
-                            ))
-                            continue
-                        }
-                    }
-
-                    if !barrasBuscadas.isEmpty {
-                        if let existente = productosEmpresa.first(where: { $0.codigoBarras == barrasBuscadas }) {
-                            print("⚠️ Ya existe en DB por código barras: \(existente.nombre) | XML trae: \(productoData.nombre)")
-                            productosConflicto.append(ProductoConflicto(
-                                productoEnDB: existente,
-                                datosNuevos: productoDataAImport(productoData)
-                            ))
-                            continue
-                        }
-                    }
-
-                    let codigoBarrasLimpio  = (codigosBarrasCount[productoData.codigoBarras]?.count ?? 0) > 1 ? "" : productoData.codigoBarras
-                    let codigoFacturaLimpio = (codigosFacturaCount[productoData.codigo]?.count ?? 0) > 1 ? "" : productoData.codigo
-
-                    productosParaImportar.append(ProductoImport(
-                        codigo: codigoFacturaLimpio,
-                        codigoBarras: codigoBarrasLimpio,
-                        nombre: productoData.nombre,
-                        cantidad: productoData.cantidad,
-                        precioSinIVA: productoData.precioSinIVA,
-                        vieneEnPaquetes: false,
-                        cantidadPaquetes: 1,
-                        codigoBarrasAutomatico: !codigoBarrasLimpio.isEmpty,
-                        codigoInterno: "",
-                        tieneDescuento: false,
-                        porcentajeDescuento: productoData.porcentajeDescuento
-                    ))
-                }
-
-            } catch {
-                print("Error leyendo el archivo: \(error)")
-            }
-
+            parsearFacturaDesdeURL(url)
         case .failure(let error):
             print("Error al abrir el archivo: \(error)")
+        }
+    }
+    
+//// manejo desde el correo
+    func parsearFacturaDesdeURL(_ url: URL) {
+        do {
+            let contenido = try String(contentsOf: url, encoding: .utf8)
+
+            guard let inicio = contenido.range(of: "<![CDATA["),
+                  let fin   = contenido.range(of: "]]>") else {
+                print("There was an error parsing the XML (no CDATA tag)")
+                return
+            }
+
+            let factura = String(contenido[inicio.upperBound..<fin.lowerBound])
+            guard let data = factura.data(using: .utf8) else { return }
+
+            let xmlparser = XMLParser(data: data)
+            let delegado  = XMLFacturaParser()
+            xmlparser.delegate = delegado
+            xmlparser.shouldProcessNamespaces = true
+            xmlparser.parse()
+
+            let codigosBarrasCount  = Dictionary(grouping: delegado.productos, by: { $0.codigoBarras })
+            let codigosFacturaCount = Dictionary(grouping: delegado.productos, by: { $0.codigo })
+
+            let nitBuscado = delegado.nit
+            let descriptor = FetchDescriptor<Empresa>(
+                predicate: #Predicate { empresa in empresa.nit == nitBuscado }
+            )
+
+            let empresasExistentes = try modelContext.fetch(descriptor)
+
+            if let empresaExistente = empresasExistentes.first {
+                empresaActual = empresaExistente
+            } else {
+                let nuevaEmpresa = Empresa(nombre: delegado.nombreEmpresa, nit: delegado.nit)
+                modelContext.insert(nuevaEmpresa)
+                empresaActual = nuevaEmpresa
+            }
+
+            let productosEmpresa = empresaActual?.productos ?? []
+
+            for productoData in delegado.productos {
+                let codigoBuscado  = productoData.codigo
+                let barrasBuscadas = productoData.codigoBarras
+
+                if !codigoBuscado.isEmpty {
+                    if let existente = productosEmpresa.first(where: { $0.codigoFactura == codigoBuscado }) {
+                        productosConflicto.append(ProductoConflicto(
+                            productoEnDB: existente,
+                            datosNuevos: productoDataAImport(productoData)
+                        ))
+                        continue
+                    }
+                }
+
+                if !barrasBuscadas.isEmpty {
+                    if let existente = productosEmpresa.first(where: { $0.codigoBarras == barrasBuscadas }) {
+                        productosConflicto.append(ProductoConflicto(
+                            productoEnDB: existente,
+                            datosNuevos: productoDataAImport(productoData)
+                        ))
+                        continue
+                    }
+                }
+
+                let codigoBarrasLimpio  = (codigosBarrasCount[productoData.codigoBarras]?.count ?? 0) > 1 ? "" : productoData.codigoBarras
+                let codigoFacturaLimpio = (codigosFacturaCount[productoData.codigo]?.count ?? 0) > 1 ? "" : productoData.codigo
+
+                productosParaImportar.append(ProductoImport(
+                    codigo: codigoFacturaLimpio,
+                    codigoBarras: codigoBarrasLimpio,
+                    nombre: productoData.nombre,
+                    cantidad: productoData.cantidad,
+                    precioSinIVA: productoData.precioSinIVA,
+                    vieneEnPaquetes: false,
+                    cantidadPaquetes: 1,
+                    codigoBarrasAutomatico: !codigoBarrasLimpio.isEmpty,
+                    codigoInterno: "",
+                    tieneDescuento: false,
+                    porcentajeDescuento: productoData.porcentajeDescuento
+                ))
+            }
+
+        } catch {
+            print("Error leyendo el archivo: \(error)")
         }
     }
 
@@ -422,7 +423,7 @@ struct AgregarXML: View {
             try modelContext.save()
             print("💾 Guardado exitoso")
             productosGuardados = productosParaImportar.count
-            mostrarExito = true  // ← activa la pantalla de éxito
+            mostrarExito = true
         } catch {
             print("❌ Error guardando: \(error)")
         }

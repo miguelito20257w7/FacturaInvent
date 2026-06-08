@@ -63,5 +63,4 @@ struct ProductoImport: Identifiable {
     var codigoInterno: String
     var tieneDescuento: Bool
     var porcentajeDescuento: Double
-    var empresa: Empresa?
 }

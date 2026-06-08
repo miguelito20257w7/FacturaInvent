@@ -42,6 +42,7 @@ struct ExportarExcelView: View {
     @State private var errorMensaje: String? = nil
     @State private var mostrarError = false
     @Binding var selectedTab: Int
+    var xmlURLInicial: URL? = nil
 
     var body: some View {
         NavigationStack {
@@ -53,6 +54,11 @@ struct ExportarExcelView: View {
                 } else {
                     vistaListaProductos
                 }
+            }
+        }
+        .task {
+            if let url = xmlURLInicial {
+                procesarDesdeURL(url)
             }
         }
         .alert("Error", isPresented: $mostrarError, presenting: errorMensaje) { _ in
@@ -213,6 +219,8 @@ struct ExportarExcelView: View {
         mostrarFilePicker = false
     }
 
+    // MARK: - Parseo desde file picker (manual)
+
     private func procesarArchivoXML(_ result: Result<URL, Error>) {
         switch result {
         case .success(let url):
@@ -221,62 +229,7 @@ struct ExportarExcelView: View {
                 return
             }
             defer { url.stopAccessingSecurityScopedResource() }
-
-            do {
-                let contenido = try String(contentsOf: url, encoding: .utf8)
-                guard
-                    let inicio = contenido.range(of: "<![CDATA["),
-                    let fin    = contenido.range(of: "]]>")
-                else {
-                    print("Error: no se encontró el bloque CDATA en el XML")
-                    errorMensaje = "El archivo XML no tiene el formato esperado."
-                    mostrarError = true
-                    return
-                }
-
-                let factura = String(contenido[inicio.upperBound..<fin.lowerBound])
-                guard let data = factura.data(using: .utf8) else { return }
-
-                let xmlparser = XMLParser(data: data)
-                let delegado  = XMLFacturaParser()
-                xmlparser.delegate = delegado
-                xmlparser.shouldProcessNamespaces = true
-                xmlparser.parse()
-
-                print("Productos encontrados: \(delegado.productos.count)")
-                print("Empresa: \(delegado.nombreEmpresa) | Nit: \(delegado.nit)")
-                
-//se modifica la funcion para que envez de buscar el producto en toda la base de datos solo lo busque en la empresa correspondiente
-                let nitBuscado = delegado.nit
-                let empresaEcontrada: Empresa? = try? modelContext.fetch(FetchDescriptor<Empresa>(predicate: #Predicate{ $0.nit == nitBuscado})).first
-                
-                empresaActual = empresaEcontrada
-
-                for productoData in delegado.productos {
-                    let productoEncontrado = buscarProducto(productoData: productoData, empresa: empresaEcontrada)
-                    productosParaImportar.append(ProductoImport(
-                        codigo:                 productoData.codigo,
-                        codigoBarras:           productoEncontrado?.codigoBarras ?? productoData.codigoBarras,
-                        nombre:                 productoData.nombre,
-                        cantidad:               productoData.cantidad,
-                        precioSinIVA:           productoData.precioSinIVA,
-                        vieneEnPaquetes:        productoEncontrado?.vieneEnPaquetes ?? false,
-                        cantidadPaquetes:       productoEncontrado?.cantidadPaquetes ?? 1,
-                        codigoBarrasAutomatico: productoEncontrado?.codigoDeBarrasAutomatico ?? false,
-                        codigoInterno:          productoEncontrado?.codigoInterno ?? "",
-                        tieneDescuento:         productoData.tieneDescuento,
-                        porcentajeDescuento: productoData.porcentajeDescuento,
-                        empresa: empresaEcontrada
-                    ))
-                    print("codigo: \(productoData.codigo) | Barras: \(productoEncontrado?.codigoBarras ?? "Sin codigo de barras")| Codigo Interno: \(productoEncontrado?.codigoInterno ?? "Sin codigo Interno") | Nombre: \(productoData.nombre) | Precio: \(productoData.precioSinIVA) | Cantidad: \(productoData.cantidad)")
-                }
-
-            } catch {
-                print("Error leyendo el archivo: \(error)")
-                errorMensaje = "No se pudo leer el archivo: \(error.localizedDescription)"
-                mostrarError = true
-            }
-
+            procesarDesdeURL(url)
         case .failure(let error):
             print("Error al seleccionar el archivo: \(error)")
             errorMensaje = "No se pudo abrir el archivo."
@@ -284,25 +237,75 @@ struct ExportarExcelView: View {
         }
     }
 
+    // MARK: - Parseo desde URL directa (correo)
+
+    func procesarDesdeURL(_ url: URL) {
+        do {
+            let contenido = try String(contentsOf: url, encoding: .utf8)
+            guard
+                let inicio = contenido.range(of: "<![CDATA["),
+                let fin    = contenido.range(of: "]]>")
+            else {
+                errorMensaje = "El archivo XML no tiene el formato esperado."
+                mostrarError = true
+                return
+            }
+
+            let factura = String(contenido[inicio.upperBound..<fin.lowerBound])
+            guard let data = factura.data(using: .utf8) else { return }
+
+            let xmlparser = XMLParser(data: data)
+            let delegado  = XMLFacturaParser()
+            xmlparser.delegate = delegado
+            xmlparser.shouldProcessNamespaces = true
+            xmlparser.parse()
+
+            let nitBuscado = delegado.nit
+            let empresaEncontrada: Empresa? = try? modelContext.fetch(
+                FetchDescriptor<Empresa>(predicate: #Predicate { $0.nit == nitBuscado })
+            ).first
+
+            empresaActual = empresaEncontrada
+
+            for productoData in delegado.productos {
+                let productoEncontrado = buscarProducto(productoData: productoData, empresa: empresaEncontrada)
+                productosParaImportar.append(ProductoImport(
+                    codigo:                 productoData.codigo,
+                    codigoBarras:           productoEncontrado?.codigoBarras ?? productoData.codigoBarras,
+                    nombre:                 productoData.nombre,
+                    cantidad:               productoData.cantidad,
+                    precioSinIVA:           productoData.precioSinIVA,
+                    vieneEnPaquetes:        productoEncontrado?.vieneEnPaquetes ?? false,
+                    cantidadPaquetes:       productoEncontrado?.cantidadPaquetes ?? 1,
+                    codigoBarrasAutomatico: productoEncontrado?.codigoDeBarrasAutomatico ?? false,
+                    codigoInterno:          productoEncontrado?.codigoInterno ?? "",
+                    tieneDescuento:         productoData.tieneDescuento,
+                    porcentajeDescuento:    productoData.porcentajeDescuento
+                ))
+            }
+        } catch {
+            errorMensaje = "No se pudo leer el archivo: \(error.localizedDescription)"
+            mostrarError = true
+        }
+    }
+
     // MARK: - Búsqueda en cascada
 
-    /// Busca un producto primero por código de factura, luego por código de barras, luego por nombre.
-    /// se modifica esta funcion para que busque solo los productos de la empresa en la que estamos , se soluciona error que hacia que buscara productos en otras empresas y pusiera codigos erroneos
     private func buscarProducto(
         productoData: (codigo: String, codigoBarras: String, nombre: String, cantidad: String, precioSinIVA: String, tieneDescuento: Bool, porcentajeDescuento: Double),
         empresa: Empresa?
     ) -> Producto? {
         let productosEmpresa = empresa?.productos ?? []
-        
+
         if !productoData.codigo.isEmpty,
            let p = productosEmpresa.first(where: { $0.codigoFactura == productoData.codigo }) { return p }
-        
+
         if !productoData.codigoBarras.isEmpty,
            let p = productosEmpresa.first(where: { $0.codigoBarras == productoData.codigoBarras }) { return p }
-        
+
         if !productoData.nombre.isEmpty,
            let p = productosEmpresa.first(where: { $0.nombre == productoData.nombre }) { return p }
-        
+
         return nil
     }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import GoogleSignIn
 
 @main
 
@@ -49,11 +50,17 @@ struct FacturaInventApp: App {
             }
             .animation(.easeInOut(duration: 0.5), value: isFirstLaunch)
             .environment(appState)
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
+            }
+            .task {
+                await GmailAuthManager.shared.restoreSession()
+            }
         }
         .modelContainer(sharedModelContainer)
         #if targetEnvironment(macCatalyst)
         .defaultSize(width: 1000, height: 650)
-        .commands { AppMenuCommands() }
+        .commands { AppMenuCommands(appState: appState) }
         #endif
     }
 }

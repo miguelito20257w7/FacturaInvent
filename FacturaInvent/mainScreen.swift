@@ -4,7 +4,9 @@ import SwiftData
 struct MainScreen: View {
     @AppStorage("isFirstLaunch") private var isFirstLaunch: Bool = true
     @Environment(AppState.self) private var appState
-    @State private var selectedTab: Int = 0  // ← AGREGADO
+    @State private var selectedTab: Int = 0
+    @State private var xmlURLParaImportar: URL? = nil
+    @State private var xmlURLParaExportar: URL? = nil
 
     #if targetEnvironment(macCatalyst)
     @State private var sidebarSelection: SidebarItem? = .empresas
@@ -24,34 +26,60 @@ struct MainScreen: View {
         } detail: {
             switch sidebarSelection ?? .empresas {
             case .empresas:
-                EmpresasTab(selectedTab: $selectedTab)  // ← CORREGIDO
+                EmpresasTab(selectedTab: $selectedTab)
             case .crear:
-                CrearTab(selectedTab: $selectedTab)     // ← CORREGIDO
+                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar)
+            case .mailView:
+                mailView()
             case .exportar:
-                ExportarTab(selectedTab: $selectedTab)  // ← CORREGIDO
+                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar)
             case .buscar:
-                BuscarTab(selectedTab: $selectedTab)    // ← CORREGIDO
+                BuscarTab(selectedTab: $selectedTab)
             }
         }
         .focusedValue(\.sidebarSelection, $sidebarSelection)
         .macWindowResizable(minSize: CGSize(width: 750, height: 550))
+        .onReceive(NotificationCenter.default.publisher(for: .importarFacturaDesdeCorreo)) { notif in
+            if let url = notif.object as? URL {
+                xmlURLParaImportar = url
+                sidebarSelection = .crear
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .exportarFacturaDesdeCorreo)) { notif in
+            if let url = notif.object as? URL {
+                xmlURLParaExportar = url
+                sidebarSelection = .exportar
+            }
+        }
         #else
-        TabView(selection: $selectedTab) {  // ← selection agregado
-            EmpresasTab(selectedTab: $selectedTab)
-                .tabItem { Label("Businesses", systemImage: "building.2") }
-                .tag(0)
-
-            CrearTab(selectedTab: $selectedTab)
-                .tabItem { Label("Create", systemImage: "plus.circle") }
-                .tag(1)
-
-            ExportarTab(selectedTab: $selectedTab)
-                .tabItem { Label("Export", systemImage: "doc.text") }
-                .tag(2)
-
-            BuscarTab(selectedTab: $selectedTab)
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-                .tag(3)
+        TabView(selection: $selectedTab) {
+            Tab("Businesses", systemImage: "building.2", value: 0) {
+                EmpresasTab(selectedTab: $selectedTab)
+            }
+            Tab("Create", systemImage: "plus.circle", value: 1) {
+                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar)
+            }
+            Tab("Mail", systemImage: "envelope", value: 2) {
+                mailView()
+            }
+            Tab("Export", systemImage: "doc.text", value: 3) {
+                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar)
+            }
+            Tab(value: 4, role: .search) {
+                BuscarTab(selectedTab: $selectedTab)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .importarFacturaDesdeCorreo)) { notif in
+            if let url = notif.object as? URL {
+                xmlURLParaImportar = url
+                selectedTab = 1
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .exportarFacturaDesdeCorreo)) { notif in
+            if let url = notif.object as? URL {
+                xmlURLParaExportar = url
+                selectedTab = 3
+            }
         }
         #endif
     }
@@ -59,57 +87,76 @@ struct MainScreen: View {
 
 // MARK: - Empresas
 
+private struct ExportableStore: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
 struct EmpresasTab: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(AppState.self) private var appState
     @Query var empresas: [Empresa]
-    @Binding var selectedTab: Int  // ← AGREGADO
-
-    private var sqliteURL: URL? {
-        FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first?
-            .appendingPathComponent("default.store")
-    }
+    @Binding var selectedTab: Int
+    @State private var exportableStore: ExportableStore? = nil
+    @State private var exportError = false
+    @State private var exportErrorMensaje = ""
 
     var body: some View {
         NavigationStack {
             List {
                 ForEach(empresas) { empresa in
-                    NavigationLink(destination: EmpresaDetalle(empresa: empresa, selectedTab: $selectedTab)) {  // ← CORREGIDO
+                    NavigationLink(destination: EmpresaDetalle(empresa: empresa, selectedTab: $selectedTab)) {
                         HStack {
                             Text(empresa.nombre)
                             Spacer()
                             Text("NIT: \(empresa.nit)")
                         }
                     }
-                }.sheet(isPresented: Bindable(appState).mostrarAgregarBaseDeDatos) {
-                    ImportarBaseDeDatos()
                 }
             }
             .navigationTitle("Businesses")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if let url = sqliteURL {
-                        ShareLink(
-                            item: url,
-                            preview: SharePreview(
-                                "FacturaInvent.store",
-                                icon: Image(systemName: "cylinder")
-                            )
+            .sheet(isPresented: Bindable(appState).mostrarAgregarBaseDeDatos) {
+                ImportarBaseDeDatos()
+            }
+            .sheet(item: $exportableStore) { item in
+                VStack(spacing: 20) {
+                    Image(systemName: "cylinder")
+                        .font(.system(size: 60))
+                        .foregroundStyle(.tint)
+                    Text("Database backup ready")
+                        .font(.title3)
+                    ShareLink(
+                        item: item.url,
+                        preview: SharePreview(
+                            item.url.lastPathComponent,
+                            icon: Image(systemName: "cylinder")
                         )
+                    ) {
+                        Label("Share backup", systemImage: "square.and.arrow.up")
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.glassProminent)
+                    .padding(.horizontal)
+                    Button("Done") { exportableStore = nil }
                 }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        appState.mostrarAgregarBaseDeDatos = true
-                    } label: {
-                        Image(systemName: "doc")
-                    }
+                .padding()
+                .presentationDetents([.medium])
+            }
+            .alert("Export error", isPresented: $exportError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(exportErrorMensaje)
+            }
+            .onChange(of: appState.mostrarExportarDB) { _, newValue in
+                guard newValue else { return }
+                appState.mostrarExportarDB = false
+                do {
+                    let url = try exportarBackupStore(modelContext: modelContext)
+                    exportableStore = ExportableStore(url: url)
+                } catch {
+                    exportErrorMensaje = error.localizedDescription
+                    exportError = true
                 }
-                #if !targetEnvironment(macCatalyst)
-                ToolbarSpacer(.flexible, placement: .bottomBar)
-                #endif
             }
             .overlay {
                 if empresas.isEmpty {
@@ -128,11 +175,12 @@ struct EmpresasTab: View {
 
 struct CrearTab: View {
     @Environment(AppState.self) private var appState
-    @Binding var selectedTab: Int  // ← AGREGADO
+    @Binding var selectedTab: Int
+    var xmlURL: URL? = nil
 
     var body: some View {
         NavigationStack {
-            AgregarXML(selectedTab: $selectedTab)  // ← CORREGIDO
+            AgregarXML(selectedTab: $selectedTab, xmlURLInicial: xmlURL)
                 .environment(appState)
                 .navigationTitle("Create")
         }
@@ -142,11 +190,12 @@ struct CrearTab: View {
 // MARK: - Exportar
 
 struct ExportarTab: View {
-    @Binding var selectedTab: Int  // ← AGREGADO
+    @Binding var selectedTab: Int
+    var xmlURL: URL? = nil
 
     var body: some View {
         NavigationStack {
-            ExportarExcelView(selectedTab: $selectedTab)  // ← CORREGIDO
+            ExportarExcelView(selectedTab: $selectedTab, xmlURLInicial: xmlURL)
                 .navigationTitle("Export")
         }
     }
@@ -155,11 +204,11 @@ struct ExportarTab: View {
 // MARK: - Buscar
 
 struct BuscarTab: View {
-    @Binding var selectedTab: Int  // ← AGREGADO
+    @Binding var selectedTab: Int
 
     var body: some View {
         NavigationStack {
-            Buscador(selectedTab: $selectedTab)  // ← CORREGIDO
+            Buscador(selectedTab: $selectedTab)
         }
     }
 }

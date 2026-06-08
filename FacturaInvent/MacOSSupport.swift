@@ -40,6 +40,7 @@ extension View {
 enum SidebarItem: String, CaseIterable, Identifiable {
     case empresas = "Empresas"
     case crear    = "Agregar"
+    case mailView = "Mail"
     case exportar = "Exportar"
     case buscar   = "Buscar"
 
@@ -52,6 +53,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
         switch self {
         case .empresas: return "Businesses"
         case .crear:    return "Create"
+        case .mailView: return "Mail"
         case .exportar: return "Export"
         case .buscar:   return "Search"
         }
@@ -61,6 +63,7 @@ enum SidebarItem: String, CaseIterable, Identifiable {
         switch self {
         case .empresas: return "building.2"
         case .crear:    return "plus.circle"
+        case .mailView: return "envelope"
         case .exportar: return "doc.text"
         case .buscar:   return "magnifyingglass"
         }
@@ -83,6 +86,7 @@ extension FocusedValues {
 // MARK: - Comandos del menú de la barra de menús
 
 struct AppMenuCommands: Commands {
+    var appState: AppState
     @FocusedValue(\.sidebarSelection) private var sidebarSelection
 
     var body: some Commands {
@@ -91,10 +95,20 @@ struct AppMenuCommands: Commands {
                 .keyboardShortcut("1", modifiers: .command)
             Button("Create") { sidebarSelection?.wrappedValue = .crear }
                 .keyboardShortcut("2", modifiers: .command)
-            Button("Export") { sidebarSelection?.wrappedValue = .exportar }
+            Button("Mail") { sidebarSelection?.wrappedValue = .mailView }
                 .keyboardShortcut("3", modifiers: .command)
-            Button("Search") { sidebarSelection?.wrappedValue = .buscar }
+            Button("Export") { sidebarSelection?.wrappedValue = .exportar }
                 .keyboardShortcut("4", modifiers: .command)
+            Button("Search") { sidebarSelection?.wrappedValue = .buscar }
+                .keyboardShortcut("5", modifiers: .command)
+        }
+        CommandMenu("Database") {
+            Button("Import Database") {
+                appState.mostrarAgregarBaseDeDatos = true
+            }
+            Button("Export Database") {
+                appState.mostrarExportarDB = true
+            }
         }
     }
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "709007696441",
+    "project_id": "facturainvent",
+    "storage_bucket": "facturainvent.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709007696441:android:09fef7637dfb5893cc63e8",
+        "android_client_info": {
+          "package_name": "com.miguel.facturainvent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbMPyUPc7oWfwWC14zwBuQ33lroIMP0fE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

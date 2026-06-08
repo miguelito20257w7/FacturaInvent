@@ -11,8 +11,7 @@ import SwiftUI
 @Observable
 class AppState {
     var mostrarAgregarXML: Bool = false
-    var mostrarConvertirAExcel: Bool = false
-    var convirtiendoAExcel: Bool = false
     var mostrarAgregarBaseDeDatos: Bool = false
+    var mostrarExportarDB: Bool = false
     var showCancelButton: Bool = false
 }
