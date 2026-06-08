@@ -9,6 +9,11 @@ class GmailInvoiceService: ObservableObject {
     @Published var errorMessage: String?
     
     private let fetcher = GmailInvoiceFetcher()
+    private let cacheKey = "GmailInvoiceService.cachedMensajes"
+    
+    init() {
+        cargarCache()
+    }
     
     func cargarCorreos() async {
         isLoading = true
@@ -25,6 +30,7 @@ class GmailInvoiceService: ObservableObject {
             }
             
             mensajes = detalles
+            guardarCache(detalles)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -64,7 +70,39 @@ class GmailInvoiceService: ObservableObject {
             throw GmailError.noAttachments
         }
         
+        Task { await marcarComoLeido(mensaje: mensaje, token: token) }
+        
         return xmlURL
+    }
+    
+    private func marcarComoLeido(mensaje: GmailMessageDetail, token: String) async {
+        guard mensaje.isUnread else { return }
+        do {
+            try await fetcher.markAsRead(messageId: mensaje.id, accessToken: token)
+            if let idx = mensajes.firstIndex(where: { $0.id == mensaje.id }) {
+                let actualizado = mensajes[idx].withoutUnread()
+                mensajes[idx] = actualizado
+                guardarCache(mensajes)
+            }
+        } catch {
+            // El marcado como leído es best-effort, no bloquea al usuario
+            print("No se pudo marcar como leído: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Caché en UserDefaults
+    
+    private func cargarCache() {
+        guard let data = UserDefaults.standard.data(forKey: cacheKey),
+              let cached = try? JSONDecoder().decode([GmailMessageDetail].self, from: data) else {
+            return
+        }
+        mensajes = cached
+    }
+    
+    private func guardarCache(_ detalles: [GmailMessageDetail]) {
+        guard let data = try? JSONEncoder().encode(detalles) else { return }
+        UserDefaults.standard.set(data, forKey: cacheKey)
     }
     
     private func decodeBase64url(_ string: String) -> Data {
@@ -74,5 +112,12 @@ class GmailInvoiceService: ObservableObject {
         let rem = base64.count % 4
         if rem > 0 { base64 += String(repeating: "=", count: 4 - rem) }
         return Data(base64Encoded: base64) ?? Data()
+    }
+}
+
+private extension GmailMessageDetail {
+    func withoutUnread() -> GmailMessageDetail {
+        let nuevosLabels = (labelIds ?? []).filter { $0 != "UNREAD" }
+        return GmailMessageDetail(id: id, payload: payload, labelIds: nuevosLabels)
     }
 }
