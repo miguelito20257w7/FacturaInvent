@@ -13,6 +13,29 @@ struct MainScreen: View {
     #endif
 
     var body: some View {
+        contenido
+            .onReceive(NotificationCenter.default.publisher(for: .importarFacturaDesdeCorreo)) { notif in
+                guard let url = notif.object as? URL else { return }
+                xmlURLParaImportar = url
+                #if targetEnvironment(macCatalyst)
+                sidebarSelection = .crear
+                #else
+                selectedTab = 1
+                #endif
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .exportarFacturaDesdeCorreo)) { notif in
+                guard let url = notif.object as? URL else { return }
+                xmlURLParaExportar = url
+                #if targetEnvironment(macCatalyst)
+                sidebarSelection = .exportar
+                #else
+                selectedTab = 3
+                #endif
+            }
+    }
+
+    @ViewBuilder
+    private var contenido: some View {
         #if targetEnvironment(macCatalyst)
         NavigationSplitView {
             List(selection: $sidebarSelection) {
@@ -39,18 +62,6 @@ struct MainScreen: View {
         }
         .focusedValue(\.sidebarSelection, $sidebarSelection)
         .macWindowResizable(minSize: CGSize(width: 750, height: 550))
-        .onReceive(NotificationCenter.default.publisher(for: .importarFacturaDesdeCorreo)) { notif in
-            if let url = notif.object as? URL {
-                xmlURLParaImportar = url
-                sidebarSelection = .crear
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .exportarFacturaDesdeCorreo)) { notif in
-            if let url = notif.object as? URL {
-                xmlURLParaExportar = url
-                sidebarSelection = .exportar
-            }
-        }
         #else
         TabView(selection: $selectedTab) {
             Tab("Businesses", systemImage: "building.2", value: 0) {
@@ -67,18 +78,6 @@ struct MainScreen: View {
             }
             Tab(value: 4, role: .search) {
                 BuscarTab(selectedTab: $selectedTab)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .importarFacturaDesdeCorreo)) { notif in
-            if let url = notif.object as? URL {
-                xmlURLParaImportar = url
-                selectedTab = 1
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .exportarFacturaDesdeCorreo)) { notif in
-            if let url = notif.object as? URL {
-                xmlURLParaExportar = url
-                selectedTab = 3
             }
         }
         #endif

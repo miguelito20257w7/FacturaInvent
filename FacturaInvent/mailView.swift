@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import GoogleSignIn
 
 struct mailView: View {

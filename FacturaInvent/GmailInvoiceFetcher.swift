@@ -5,7 +5,7 @@ class GmailInvoiceFetcher {
     private let baseURL = "https://gmail.googleapis.com/gmail/v1/users/me"
     
     func fetchInvoiceEmails(accessToken: String) async throws -> [GmailMessageRef] {
-        let query = "has:attachment (filename:zip OR filename:xml)"
+        let query = "label:INBOX/EJAIVANA has:attachment (filename:zip OR filename:xml)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         let url = URL(string: "\(baseURL)/messages?q=\(query)&maxResults=50")!
         let data = try await get(url: url, token: accessToken)
@@ -23,7 +23,10 @@ class GmailInvoiceFetcher {
         let url = URL(string: "\(baseURL)/messages/\(messageId)/attachments/\(attachmentId)")!
         let data = try await get(url: url, token: accessToken)
         let response = try JSONDecoder().decode(AttachmentBody.self, from: data)
-        return decodeBase64url(response.data)
+        guard let encoded = response.data, !encoded.isEmpty else {
+            throw GmailError.downloadFailed
+        }
+        return decodeBase64url(encoded)
     }
     
     func extractInvoiceAttachments(from message: GmailMessageDetail) -> [MessagePart] {
@@ -46,6 +49,21 @@ class GmailInvoiceFetcher {
             }
         }
         return result
+    }
+    
+    func markAsRead(messageId: String, accessToken: String) async throws {
+        let url = URL(string: "\(baseURL)/messages/\(messageId)/modify")!
+        let body: [String: Any] = ["removeLabelIds": ["UNREAD"]]
+        let jsonData = try JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw GmailError.downloadFailed
+        }
     }
     
     private func get(url: URL, token: String) async throws -> Data {
@@ -78,10 +96,11 @@ struct GmailMessageRef: Codable, Identifiable {
     let threadId: String
 }
 
-struct GmailMessageDetail: Codable {
+struct GmailMessageDetail: Codable, Identifiable {
     let id: String
     let payload: MessagePayload
-    
+    let labelIds: [String]?
+
     var subject: String? {
         payload.headers?.first(where: { $0.name == "Subject" })?.value
     }
@@ -90,6 +109,9 @@ struct GmailMessageDetail: Codable {
     }
     var date: String? {
         payload.headers?.first(where: { $0.name == "Date" })?.value
+    }
+    var isUnread: Bool {
+        labelIds?.contains("UNREAD") ?? false
     }
 }
 
@@ -113,5 +135,5 @@ struct MessagePart: Codable {
 struct AttachmentBody: Codable {
     let attachmentId: String?
     let size: Int?
-    let data: String
+    let data: String?
 }

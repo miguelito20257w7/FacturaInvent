@@ -194,10 +194,24 @@
       }
     },
     "Choose a backup file to import (.store)" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un archivo de respaldo para importar (.store)"
+          }
+        }
+      }
     },
     "Choose file…" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir archivo…"
+          }
+        }
+      }
     },
     "Close" : {
       "comment" : "A button that closes the current view.",
@@ -222,7 +236,14 @@
       }
     },
     "Connect your Gmail to import invoices automatically" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta tu Gmail para importar facturas automáticamente"
+          }
+        }
+      }
     },
     "Continue" : {
       "comment" : "A button that allows the user to continue to the main screen.",
@@ -249,10 +270,24 @@
       }
     },
     "Database" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base de datos"
+          }
+        }
+      }
     },
     "Database backup ready" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respaldo de base de datos listo"
+          }
+        }
+      }
     },
     "Delete" : {
       "comment" : "A section that allows the user to delete a product.",
@@ -315,7 +350,14 @@
       }
     },
     "Downloading invoice..." : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargando factura..."
+          }
+        }
+      }
     },
     "Error" : {
       "comment" : "A title for an alert.",
@@ -366,13 +408,34 @@
       }
     },
     "Export Database" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportar base de datos"
+          }
+        }
+      }
     },
     "Export error" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al exportar"
+          }
+        }
+      }
     },
     "Export invoice" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportar factura"
+          }
+        }
+      }
     },
     "Export to Excel with one tap" : {
       "extractionState" : "manual",
@@ -487,7 +550,14 @@
       }
     },
     "Import invoice" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar factura"
+          }
+        }
+      }
     },
     "Import successful!" : {
       "comment" : "A title displayed after a successful product import.",
@@ -561,16 +631,44 @@
       }
     },
     "Invoice" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Factura"
+          }
+        }
+      }
     },
     "Invoices" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facturas"
+          }
+        }
+      }
     },
     "Loading emails..." : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando correos..."
+          }
+        }
+      }
     },
     "Mail" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correo"
+          }
+        }
+      }
     },
     "Modify product" : {
       "comment" : "A title for the screen that allows the user to modify a product.",
@@ -655,7 +753,14 @@
       }
     },
     "No invoices found" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron facturas"
+          }
+        }
+      }
     },
     "No products" : {
       "comment" : "A label displayed when a user has no products.",
@@ -811,10 +916,24 @@
       }
     },
     "Replace all" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reemplazar todo"
+          }
+        }
+      }
     },
     "Replace all data?" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Reemplazar todos los datos?"
+          }
+        }
+      }
     },
     "Review Products" : {
       "localizations" : {
@@ -863,7 +982,14 @@
       }
     },
     "Share backup" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir respaldo"
+          }
+        }
+      }
     },
     "Share Excel" : {
       "comment" : "A button that shares an Excel file.",
@@ -946,10 +1072,24 @@
       }
     },
     "Sign in with Google" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión con Google"
+          }
+        }
+      }
     },
     "Sign out" : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar sesión"
+          }
+        }
+      }
     },
     "Start Over" : {
       "comment" : "A button that restarts the export process.",
@@ -1000,7 +1140,14 @@
       }
     },
     "This will permanently delete every business and product before restoring the file. This action cannot be undone." : {
-
+      "localizations" : {
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto eliminará permanentemente todas las empresas y productos antes de restaurar el archivo. Esta acción no se puede deshacer."
+          }
+        }
+      }
     },
     "Units per package: " : {
       "comment" : "A label displayed next to the package quantity text field.",

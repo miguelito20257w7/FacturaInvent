@@ -39,29 +39,17 @@
 		DD46E64E2F8974CD00398ADF /* Exceptions for "FacturaInvent" folder in "FacturaInvent" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				GmailNotifications.swift,
 				Info.plist,
 			);
 			target = DD46E62A2F8974CC00398ADF /* FacturaInvent */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		DD4FCED82FD642F70069F00D /* Exceptions for "FacturaInvent" folder in "Copy Bundle Resources" phase from "FacturaInvent" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = DD46E6292F8974CC00398ADF /* Resources */;
-			membershipExceptions = (
-				GmailNotifications.swift,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DD46E62D2F8974CC00398ADF /* FacturaInvent */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				DD46E64E2F8974CD00398ADF /* Exceptions for "FacturaInvent" folder in "FacturaInvent" target */,
-				DD4FCED82FD642F70069F00D /* Exceptions for "FacturaInvent" folder in "Copy Bundle Resources" phase from "FacturaInvent" target */,
 			);
 			path = FacturaInvent;
 			sourceTree = "<group>";
