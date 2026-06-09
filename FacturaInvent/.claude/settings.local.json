@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"/Users/miguelito/Github/Proyectos Xcode/FacturaInvent\")",
+      "Bash(ls \"/Users/miguelito/Library/Developer/Xcode/DerivedData/\" | grep -i FacturaInvent)",
+      "Bash(git -C /Users/miguelito/Library/Developer/Xcode/DerivedData/FacturaInvent-dktsuelicckkzofpwemvfmmbasxw/SourcePackages/checkouts/ZIPFoundation remote -v)",
+      "Bash(rm -rf \"/Users/miguelito/Library/Developer/Xcode/DerivedData/FacturaInvent-dktsuelicckkzofpwemvfmmbasxw\" && echo \"DerivedData eliminado ✓\")",
+      "Bash(git -C /Users/miguelito/Library/Developer/Xcode/DerivedData/FacturaInvent-dktsuelicckkzofpwemvfmmbasxw/SourcePackages/checkouts/ZIPFoundation remote set-url origin https://github.com/weichsel/ZIPFoundation)",
+      "Bash(git config *)",
+      "Bash(git --version)"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id" : "06cfd7d0-6bc3-4c0e-839d-9f6bf2e1894f",
+  "targets" : [
+    {
+      "id" : "14C8F917-0672-45BC-9190-478BFA5CE555",
+      "name" : "FacturaInvent"
+    }
+  ]
+}
