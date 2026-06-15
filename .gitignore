@@ -1,6 +1,10 @@
 # macOS
 .DS_Store
 
+# CocoaPods — los pods se reinstalan en cada build (local y Xcode Cloud).
+# Se versionan Podfile y Podfile.lock; no el directorio Pods/.
+Pods/
+
 # Xcode build output
 build/
 DerivedData/
