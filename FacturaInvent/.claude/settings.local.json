@@ -7,7 +7,24 @@
       "Bash(rm -rf \"/Users/miguelito/Library/Developer/Xcode/DerivedData/FacturaInvent-dktsuelicckkzofpwemvfmmbasxw\" && echo \"DerivedData eliminado ✓\")",
       "Bash(git -C /Users/miguelito/Library/Developer/Xcode/DerivedData/FacturaInvent-dktsuelicckkzofpwemvfmmbasxw/SourcePackages/checkouts/ZIPFoundation remote set-url origin https://github.com/weichsel/ZIPFoundation)",
       "Bash(git config *)",
-      "Bash(git --version)"
+      "Bash(git --version)",
+      "Read(//Users/miguelito/Github/Proyectos Xcode/FacturaInvent/**)",
+      "Bash(find . -type f \\\\\\( -name \"*.pbxproj\" -o -name \"*.entitlements\" -o -name \"Info.plist\" -o -name \"exportOptions.plist\" -o -name \"*.mobileprovision\" \\\\\\) -not -path \"*/Pods/*\" -not -path \"*/.git/*\")",
+      "Bash(find . -maxdepth 2 -type d -not -path \"*/.git*\")",
+      "WebSearch",
+      "Bash(gem install *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Library/Frameworks/**)",
+      "Read(//Users/miguelito/**)",
+      "Read(//usr/**)",
+      "Bash(plutil -lint FacturaInvent.xcodeproj/project.pbxproj)",
+      "Bash(chmod +x ci_scripts/ci_post_clone.sh)",
+      "Read(//Applications/**)",
+      "Bash(mdfind \"kMDItemCFBundleIdentifier == 'com.apple.dt.Xcode'\")",
+      "Bash(git check-ignore *)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
