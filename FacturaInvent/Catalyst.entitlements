@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- macOS / Mac Catalyst EXIGE declarar el App Sandbox de forma explícita.
+	     En iOS es implícito; por eso este archivo es solo para sdk=macosx*. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+
+	<!-- Red: cliente (servidor http del super) y servidor (conexiones entrantes). -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+
+	<!-- Archivos: el usuario elige archivos (importar/exportar XML, Excel, PDF). -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.files.downloads.read-write</key>
+	<true/>
+
+	<!-- Dispositivos (lector/impresora del super). -->
+	<key>com.apple.security.device.usb</key>
+	<true/>
+	<key>com.apple.security.device.bluetooth</key>
+	<true/>
+
+	<!-- iCloud + CloudKit + Push (igual que la versión iOS). -->
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.Miguel.FacturaInvent</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
+</dict>
+</plist>

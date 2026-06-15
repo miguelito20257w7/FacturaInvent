@@ -362,6 +362,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FacturaInvent/FacturaInvent.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = FacturaInvent/Catalyst.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 43;
 				DEVELOPMENT_TEAM = WFLZKCYTXB;
@@ -421,6 +422,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = FacturaInvent/FacturaInvent.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = FacturaInvent/Catalyst.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 43;
 				DEVELOPMENT_TEAM = WFLZKCYTXB;
