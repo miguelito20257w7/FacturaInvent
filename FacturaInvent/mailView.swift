@@ -5,6 +5,15 @@ import GoogleSignIn
 struct mailView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var service = GmailInvoiceService()
+    @State private var busqueda: String = ""
+
+    private var mensajesFiltrados: [GmailMessageDetail] {
+        if busqueda.isEmpty { return service.mensajes }
+        return service.mensajes.filter { mensaje in
+            (mensaje.subject ?? "").localizedCaseInsensitiveContains(busqueda) ||
+            (mensaje.from ?? "").localizedCaseInsensitiveContains(busqueda)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -60,7 +69,7 @@ struct mailView: View {
     // MARK: - Lista
 
     private var listaMensajes: some View {
-        List(service.mensajes) { mensaje in
+        List(mensajesFiltrados) { mensaje in
             NavigationLink {
                 FacturaCorreoDetalle(mensaje: mensaje, service: service)
             } label: {
@@ -86,6 +95,7 @@ struct mailView: View {
                 .padding(.vertical, 4)
             }
         }
+        .searchable(text: $busqueda, prompt: "Search invoices")
         .refreshable {
             Task {
                 await service.cargarCorreos()

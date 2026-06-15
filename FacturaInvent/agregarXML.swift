@@ -31,8 +31,10 @@ struct AgregarXML: View {
     @State private var mostrarFilePicker = false
     @State private var mostrarExito = false
     @State private var productosGuardados = 0
+    @State private var urlProcesada: URL? = nil
     @Binding var selectedTab: Int
     var xmlURLInicial: URL? = nil
+    var onConsumirURL: (() -> Void)? = nil
 
     private var hayProductos: Bool {
         !productosParaImportar.isEmpty || !productosConflicto.isEmpty
@@ -67,10 +69,23 @@ struct AgregarXML: View {
             appState.showCancelButton = true
             return .handled
         }
-        .task {
-            if let url = xmlURLInicial {
-                parsearFacturaDesdeURL(url)
-            }
+        .task(id: xmlURLInicial) {
+            // Solo parseamos cuando llega una factura NUEVA desde el correo.
+            // MainScreen pasa la URL vía @State y nunca la limpia, así que .task
+            // se vuelve a disparar cada vez que el tab reaparece (cambio de tab).
+            // Sin esta guarda se re-parsearía la misma factura y, como el parser
+            // hace append, los productos se duplicarían en cada reaparición.
+            guard let url = xmlURLInicial, url != urlProcesada else { return }
+            urlProcesada = url
+            productosParaImportar = []
+            productosConflicto = []
+            empresaActual = nil
+            parsearFacturaDesdeURL(url)
+            // Consumimos la URL en el origen (MainScreen) para que no quede
+            // "pegada" y se re-parsee al reaparecer la vista. Es lo que cierra
+            // el caso de Catalyst, donde el detalle se recrea desde cero y
+            // reinicia urlProcesada en cada visita al tab.
+            onConsumirURL?()
         }
     }
 

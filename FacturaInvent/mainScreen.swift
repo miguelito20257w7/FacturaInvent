@@ -51,11 +51,11 @@ struct MainScreen: View {
             case .empresas:
                 EmpresasTab(selectedTab: $selectedTab)
             case .crear:
-                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar)
+                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar, onConsumirURL: { xmlURLParaImportar = nil })
             case .mailView:
                 mailView()
             case .exportar:
-                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar)
+                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar, onConsumirURL: { xmlURLParaExportar = nil })
             case .buscar:
                 BuscarTab(selectedTab: $selectedTab)
             }
@@ -68,13 +68,13 @@ struct MainScreen: View {
                 EmpresasTab(selectedTab: $selectedTab)
             }
             Tab("Create", systemImage: "plus.circle", value: 1) {
-                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar)
+                CrearTab(selectedTab: $selectedTab, xmlURL: xmlURLParaImportar, onConsumirURL: { xmlURLParaImportar = nil })
             }
             Tab("Mail", systemImage: "envelope", value: 2) {
                 mailView()
             }
             Tab("Export", systemImage: "doc.text", value: 3) {
-                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar)
+                ExportarTab(selectedTab: $selectedTab, xmlURL: xmlURLParaExportar, onConsumirURL: { xmlURLParaExportar = nil })
             }
             Tab(value: 4, role: .search) {
                 BuscarTab(selectedTab: $selectedTab)
@@ -176,10 +176,11 @@ struct CrearTab: View {
     @Environment(AppState.self) private var appState
     @Binding var selectedTab: Int
     var xmlURL: URL? = nil
+    var onConsumirURL: (() -> Void)? = nil
 
     var body: some View {
         NavigationStack {
-            AgregarXML(selectedTab: $selectedTab, xmlURLInicial: xmlURL)
+            AgregarXML(selectedTab: $selectedTab, xmlURLInicial: xmlURL, onConsumirURL: onConsumirURL)
                 .environment(appState)
                 .navigationTitle("Create")
         }
@@ -191,10 +192,11 @@ struct CrearTab: View {
 struct ExportarTab: View {
     @Binding var selectedTab: Int
     var xmlURL: URL? = nil
+    var onConsumirURL: (() -> Void)? = nil
 
     var body: some View {
         NavigationStack {
-            ExportarExcelView(selectedTab: $selectedTab, xmlURLInicial: xmlURL)
+            ExportarExcelView(selectedTab: $selectedTab, xmlURLInicial: xmlURL, onConsumirURL: onConsumirURL)
                 .navigationTitle("Export")
         }
     }

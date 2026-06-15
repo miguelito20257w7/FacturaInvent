@@ -7,7 +7,7 @@ class GmailInvoiceFetcher {
     func fetchInvoiceEmails(accessToken: String) async throws -> [GmailMessageRef] {
         let query = "label:INBOX/EJAIVANA has:attachment (filename:zip OR filename:xml)"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        let url = URL(string: "\(baseURL)/messages?q=\(query)&maxResults=50")!
+        let url = URL(string: "\(baseURL)/messages?q=\(query)&maxResults=500")!
         let data = try await get(url: url, token: accessToken)
         let list = try JSONDecoder().decode(MessageList.self, from: data)
         return list.messages ?? []

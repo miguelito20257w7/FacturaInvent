@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import openpyxl; print\\('openpyxl OK'\\)\")",
+      "Bash(pg_isready)",
+      "Bash(python3)",
+      "Read(//opt/homebrew/**)",
+      "Read(//Library/Frameworks/Python.framework/**)",
+      "Bash(brew --version)",
+      "Bash(python3 -m venv .venv)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(/Applications/Postgres.app/Contents/Versions/latest/bin/psql -d postgres -c \"CREATE DATABASE facturainvent2;\")",
+      "Bash(/Applications/Postgres.app/Contents/Versions/latest/bin/psql -d postgres -tc \"SELECT datname FROM pg_database WHERE datname='facturainvent2';\")",
+      "Bash(.venv/bin/python seed.py --password admin123)",
+      "Bash(.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8000)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(curl -s -X POST http://localhost:8000/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"miguelito\",\"password\":\"admin123\"}')",
+      "Bash(.venv/bin/python importar_excel.py \"../CUADRE CAJA-1.xlsm\")",
+      "Bash(/Applications/Postgres.app/Contents/Versions/latest/bin/psql -d facturainvent2 -c \"DELETE FROM cuadres_caja WHERE numero_turno=5667 AND usuario_nombre='MIGUELITO';\")",
+      "Read(//private/tmp/**)",
+      "Bash(curl -sL -o xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/latest/download/xcodegen.zip)",
+      "Bash(unzip -oq xcodegen.zip)",
+      "Bash(./xcodegen/bin/xcodegen --version)",
+      "Bash(/tmp/xcodegen/bin/xcodegen generate *)",
+      "Bash(xcodebuild -project FacturaInvent2.xcodeproj -scheme FacturaInvent2 -destination 'generic/platform=iOS Simulator' -quiet build CODE_SIGNING_ALLOWED=NO)",
+      "Bash(grep -vE \"^$\")",
+      "Bash(xcodebuild -list -project FacturaInvent2.xcodeproj)",
+      "Bash(xcrun simctl *)",
+      "Bash(xcodebuild -project FacturaInvent2.xcodeproj -scheme FacturaInvent2 -destination 'platform=iOS Simulator,name=iPhone 17' build CODE_SIGNING_ALLOWED=NO)",
+      "Bash(xcodebuild -project FacturaInvent2.xcodeproj -scheme FacturaInvent2 -destination 'platform=macOS,variant=Mac Catalyst' build CODE_SIGNING_ALLOWED=NO)",
+      "Bash(curl -s -m 2 http://localhost:8000/health)",
+      "Bash(/Applications/Postgres.app/Contents/Versions/latest/bin/pg_isready)",
+      "Bash(chmod +x iniciar.sh detener.sh)",
+      "Bash(./iniciar.sh)",
+      "Bash(./detener.sh)",
+      "Bash(xcodebuild -list -project FacturaInvent.xcodeproj)",
+      "Bash(xcodebuild build *)",
+      "Bash(rm -rf /tmp/fi_build)",
+      "Bash(rm -rf /tmp/fi_build_ios /tmp/fi_build_cat)"
+    ]
+  }
+}

@@ -41,8 +41,10 @@ struct ExportarExcelView: View {
     @State private var mostrarGuardarEn = false
     @State private var errorMensaje: String? = nil
     @State private var mostrarError = false
+    @State private var urlProcesada: URL? = nil
     @Binding var selectedTab: Int
     var xmlURLInicial: URL? = nil
+    var onConsumirURL: (() -> Void)? = nil
 
     var body: some View {
         NavigationStack {
@@ -56,10 +58,19 @@ struct ExportarExcelView: View {
                 }
             }
         }
-        .task {
-            if let url = xmlURLInicial {
-                procesarDesdeURL(url)
-            }
+        .task(id: xmlURLInicial) {
+            // Igual que en AgregarXML: la URL del correo es "pegajosa" en MainScreen
+            // y .task se redispara al reaparecer el tab. Sin esta guarda + reset,
+            // procesarDesdeURL haría append y duplicaría los productos.
+            guard let url = xmlURLInicial, url != urlProcesada else { return }
+            urlProcesada = url
+            urlParaCompartir = nil
+            productosParaImportar = []
+            empresaActual = nil
+            procesarDesdeURL(url)
+            // Consumimos la URL en el origen para que no quede "pegada" y se
+            // re-parsee al reaparecer la vista (cierra también el caso Catalyst).
+            onConsumirURL?()
         }
         .alert("Error", isPresented: $mostrarError, presenting: errorMensaje) { _ in
             Button("OK", role: .cancel) {}

@@ -39,14 +39,15 @@ class GmailInvoiceService: ObservableObject {
         isLoading = false
     }
     
-    func descargarXML(mensaje: GmailMessageDetail) async throws -> URL {
+    /// Descarga el adjunto, lo extrae y devuelve XML + PDF (si existe). Marca como leído.
+    func descargarFactura(mensaje: GmailMessageDetail) async throws -> ExtractedInvoice {
         let token = try await GmailAuthManager.shared.accessToken()
         let adjuntos = fetcher.extractInvoiceAttachments(from: mensaje)
-        
+
         guard let adjunto = adjuntos.first, let filename = adjunto.filename else {
             throw GmailError.noAttachments
         }
-        
+
         let attachData: Data
         if let attachmentId = adjunto.body?.attachmentId {
             attachData = try await fetcher.fetchAttachmentData(
@@ -59,20 +60,24 @@ class GmailInvoiceService: ObservableObject {
         } else {
             throw GmailError.downloadFailed
         }
-        
+
         let extracted: ExtractedInvoice
         if filename.lowercased().hasSuffix(".zip") {
             extracted = try InvoiceFileManager.saveAndExtract(data: attachData, filename: filename)
         } else {
             extracted = try InvoiceFileManager.saveXML(data: attachData, filename: filename)
         }
-        
+
+        Task { await marcarComoLeido(mensaje: mensaje, token: token) }
+
+        return extracted
+    }
+
+    func descargarXML(mensaje: GmailMessageDetail) async throws -> URL {
+        let extracted = try await descargarFactura(mensaje: mensaje)
         guard let xmlURL = extracted.xmlURL else {
             throw GmailError.noAttachments
         }
-        
-        Task { await marcarComoLeido(mensaje: mensaje, token: token) }
-        
         return xmlURL
     }
     
