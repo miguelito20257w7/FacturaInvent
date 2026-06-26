@@ -8,9 +8,9 @@ inventario y facturación. Importa facturas electrónicas en formato XML
 
 - **Swift / SwiftUI** — UI nativa para iOS, iPadOS y macOS (Mac Catalyst)
 - **SwiftData + CloudKit** — persistencia local con sincronización en iCloud
-- **CocoaPods** — gestión de dependencias (`GoogleSignIn`, `ZIPFoundation`)
+- **Swift Package Manager (SPM)** — gestión de dependencias (`GoogleSignIn`, `ZIPFoundation`)
 - **Gmail API + Google Sign-In** — importación de facturas desde el correo
-- **Xcode Cloud** — integración y compilación continua (ver `ci_scripts/`)
+- **Xcode Cloud** — integración y compilación continua
 
 ## Estructura del proyecto
 
@@ -27,13 +27,16 @@ FacturaInvent/                 # Código fuente de la app
 ├── Gmail*.swift / mailView.swift  # Integración con Gmail
 └── ...                        # Pantallas y vistas (SwiftUI)
 
-FacturaInvent.xcodeproj        # Proyecto Xcode
-FacturaInvent.xcworkspace      # Workspace (proyecto + Pods)
+FacturaInvent.xcodeproj        # Proyecto Xcode (dependencias SPM)
+FacturaInvent.xcworkspace      # Workspace
 FacturaInventTests/            # Tests unitarios
 FacturaInventUITests/          # Tests de interfaz
-ci_scripts/                    # Scripts de Xcode Cloud
-Podfile / Podfile.lock         # Dependencias CocoaPods
 ```
+
+Las dependencias SPM (`GoogleSignIn` 9.1.0 y `ZIPFoundation` 0.9.20) están
+declaradas en el proyecto; Xcode las resuelve automáticamente al abrirlo. Las
+versiones quedan fijadas en
+`FacturaInvent.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
 
 ## Funcionalidades
 
@@ -47,16 +50,12 @@ Podfile / Podfile.lock         # Dependencias CocoaPods
 ## Requisitos
 
 - Xcode 16+
-- iOS / iPadOS 26+ (ver `platform :ios` en el `Podfile`)
-- CocoaPods (`brew install cocoapods`)
+- iOS / iPadOS 26+ (`IPHONEOS_DEPLOYMENT_TARGET = 26.0`)
 - Cuenta de Apple Developer con CloudKit habilitado
 
 ## Configuración
 
 1. Clona el repositorio.
-2. Instala las dependencias:
-   ```bash
-   pod install
-   ```
-3. Abre **`FacturaInvent.xcworkspace`** en Xcode (no el `.xcodeproj`).
-4. Elige un simulador o "My Mac (Mac Catalyst)" y ⌘R.
+2. Abre **`FacturaInvent.xcodeproj`** (o `FacturaInvent.xcworkspace`) en Xcode;
+   las dependencias SPM se resuelven automáticamente.
+3. Elige un simulador o "My Mac (Mac Catalyst)" y ⌘R.

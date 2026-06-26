@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D46E72465A91E7DE77D7AB3 /* Pods_FacturaInvent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B01C3FE1049AFA35F29844 /* Pods_FacturaInvent.framework */; };
+		AC0000000000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AB0000000000000000000001 /* GoogleSignIn */; };
+		AC0000000000000000000002 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = AB0000000000000000000002 /* ZIPFoundation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,9 +29,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6C2B25FA6B2302E2B77CD7F1 /* Pods-FacturaInvent.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FacturaInvent.debug.xcconfig"; path = "Target Support Files/Pods-FacturaInvent/Pods-FacturaInvent.debug.xcconfig"; sourceTree = "<group>"; };
-		86B01C3FE1049AFA35F29844 /* Pods_FacturaInvent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FacturaInvent.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C413F75FFB57019B89EF66FC /* Pods-FacturaInvent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FacturaInvent.release.xcconfig"; path = "Target Support Files/Pods-FacturaInvent/Pods-FacturaInvent.release.xcconfig"; sourceTree = "<group>"; };
 		DD46E62B2F8974CC00398ADF /* FacturaInvent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FacturaInvent.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD46E63C2F8974CD00398ADF /* FacturaInventTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FacturaInventTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD46E6462F8974CD00398ADF /* FacturaInventUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FacturaInventUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,7 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D46E72465A91E7DE77D7AB3 /* Pods_FacturaInvent.framework in Frameworks */,
+				AC0000000000000000000001 /* GoogleSignIn in Frameworks */,
+				AC0000000000000000000002 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,15 +92,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6B608A2493BF0A0D97AC3867 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				6C2B25FA6B2302E2B77CD7F1 /* Pods-FacturaInvent.debug.xcconfig */,
-				C413F75FFB57019B89EF66FC /* Pods-FacturaInvent.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		DD46E6222F8974CC00398ADF = {
 			isa = PBXGroup;
 			children = (
@@ -110,7 +100,6 @@
 				DD46E6492F8974CD00398ADF /* FacturaInventUITests */,
 				DD4FCEC12FD62A980069F00D /* Frameworks */,
 				DD46E62C2F8974CC00398ADF /* Products */,
-				6B608A2493BF0A0D97AC3867 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -127,7 +116,6 @@
 		DD4FCEC12FD62A980069F00D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				86B01C3FE1049AFA35F29844 /* Pods_FacturaInvent.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -139,11 +127,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD46E64F2F8974CD00398ADF /* Build configuration list for PBXNativeTarget "FacturaInvent" */;
 			buildPhases = (
-				49D84D4AF89EE615A6407059 /* [CP] Check Pods Manifest.lock */,
 				DD46E6272F8974CC00398ADF /* Sources */,
 				DD46E6282F8974CC00398ADF /* Frameworks */,
 				DD46E6292F8974CC00398ADF /* Resources */,
-				49D7102334F99AFEBC92C2A6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -153,6 +139,10 @@
 				DD46E62D2F8974CC00398ADF /* FacturaInvent */,
 			);
 			name = FacturaInvent;
+			packageProductDependencies = (
+				AB0000000000000000000001 /* GoogleSignIn */,
+				AB0000000000000000000002 /* ZIPFoundation */,
+			);
 			productName = FacturaInvent;
 			productReference = DD46E62B2F8974CC00398ADF /* FacturaInvent.app */;
 			productType = "com.apple.product-type.application";
@@ -235,6 +225,10 @@
 			);
 			mainGroup = DD46E6222F8974CC00398ADF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AA0000000000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				AA0000000000000000000002 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DD46E62C2F8974CC00398ADF /* Products */;
 			projectDirPath = "";
@@ -270,52 +264,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		49D7102334F99AFEBC92C2A6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FacturaInvent/Pods-FacturaInvent-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FacturaInvent/Pods-FacturaInvent-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FacturaInvent/Pods-FacturaInvent-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		49D84D4AF89EE615A6407059 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-FacturaInvent-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DD46E6272F8974CC00398ADF /* Sources */ = {
@@ -357,7 +305,6 @@
 /* Begin XCBuildConfiguration section */
 		DD46E6502F8974CD00398ADF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C2B25FA6B2302E2B77CD7F1 /* Pods-FacturaInvent.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -417,7 +364,6 @@
 		};
 		DD46E6512F8974CD00398ADF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C413F75FFB57019B89EF66FC /* Pods-FacturaInvent.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = icon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -726,6 +672,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA0000000000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+		AA0000000000000000000002 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB0000000000000000000001 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0000000000000000000001 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		AB0000000000000000000002 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0000000000000000000002 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DD46E6232F8974CC00398ADF /* Project object */;
 }
