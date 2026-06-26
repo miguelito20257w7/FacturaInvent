@@ -1,61 +1,62 @@
 # FacturaInvent
 
-Sistema de gestión de inventario y facturación que importa facturas electrónicas en formato XML (DIAN) y exporta reportes en XLSX. Disponible en iOS, Android y Desktop.
+Aplicación nativa de iOS / iPadOS / macOS (Mac Catalyst) para gestión de
+inventario y facturación. Importa facturas electrónicas en formato XML
+(estándar DIAN de Colombia) y exporta reportes a Excel (XLSX).
 
 ## Tecnologías
 
-- **Flutter / Dart** — UI multiplataforma (iOS, Android, Windows, macOS, Linux)
-- **Swift** — Implementación nativa iOS complementaria
-- **Firebase** — Autenticación y Firestore como base de datos
-- **Riverpod** — Gestión de estado
-- **Go Router** — Navegación
-- **xml** — Parseo de facturas XML (formato DIAN)
-- **excel** — Exportación a XLSX
+- **Swift / SwiftUI** — UI nativa para iOS, iPadOS y macOS (Mac Catalyst)
+- **SwiftData + CloudKit** — persistencia local con sincronización en iCloud
+- **CocoaPods** — gestión de dependencias (`GoogleSignIn`, `ZIPFoundation`)
+- **Gmail API + Google Sign-In** — importación de facturas desde el correo
+- **Xcode Cloud** — integración y compilación continua (ver `ci_scripts/`)
 
 ## Estructura del proyecto
 
 ```
-facturainvent_flutter/         # App Flutter principal
-├── lib/
-│   ├── features/             # Módulos por funcionalidad
-│   ├── models/               # Modelos con Freezed + JSON serializable
-│   └── main.dart
+FacturaInvent/                 # Código fuente de la app
+├── FacturaInventApp.swift     # Punto de entrada (SwiftData + CloudKit)
+├── AppState.swift             # Estado global (patrón @Observable)
+├── modelos.swift              # Modelos SwiftData (Empresa, Producto)
+├── ImportarBaseDeDatos.swift  # Importación de base de datos
+├── XMLFacturaParser.swift     # Parseo de facturas XML (formato DIAN)
+├── agregarXML.swift           # Flujo de importación de XML
+├── exportarExcel.swift /      # Exportación de reportes a XLSX
+│   convertirAExcel.swift
+├── Gmail*.swift / mailView.swift  # Integración con Gmail
+└── ...                        # Pantallas y vistas (SwiftUI)
 
-FacturaInvent/                 # Implementación Swift (iOS)
-├── AppState.swift             # Estado global (patrón Observable)
-├── ImportarBaseDeDatos.swift  # Lógica de importación
-├── modelos.swift              # Modelos de datos
-└── FacturaJSONFormat.swift    # Formato JSON/factura
+FacturaInvent.xcodeproj        # Proyecto Xcode
+FacturaInvent.xcworkspace      # Workspace (proyecto + Pods)
+FacturaInventTests/            # Tests unitarios
+FacturaInventUITests/          # Tests de interfaz
+ci_scripts/                    # Scripts de Xcode Cloud
+Podfile / Podfile.lock         # Dependencias CocoaPods
 ```
 
 ## Funcionalidades
 
 - Importación de facturas electrónicas XML (estándar DIAN Colombia)
-- Gestión de base de datos de productos
+- Gestión de base de datos de productos por empresa
+- Importación de facturas desde Gmail
 - Exportación de reportes a XLSX
-- Sincronización en la nube con Firestore
-- Soporte para Desktop (window_manager)
-- Selector de archivos nativo por plataforma
+- Sincronización en la nube con CloudKit
+- Soporte para macOS vía Mac Catalyst
 
 ## Requisitos
 
-- Flutter SDK `>=3.0.0`
-- Firebase configurado para el proyecto
-- Xcode 15+ (para build iOS/macOS)
+- Xcode 16+
+- iOS / iPadOS 26+ (ver `platform :ios` en el `Podfile`)
+- CocoaPods (`brew install cocoapods`)
+- Cuenta de Apple Developer con CloudKit habilitado
 
 ## Configuración
 
-1. Clona el repositorio
-2. Agrega los archivos de configuración de Firebase:
-   - `google-services.json` → carpeta Android
-   - `GoogleService-Info.plist` → carpeta iOS
-3. Instala dependencias y genera código:
+1. Clona el repositorio.
+2. Instala las dependencias:
    ```bash
-   cd facturainvent_flutter
-   flutter pub get
-   dart run build_runner build
+   pod install
    ```
-4. Ejecuta:
-   ```bash
-   flutter run
-   ```
+3. Abre **`FacturaInvent.xcworkspace`** en Xcode (no el `.xcodeproj`).
+4. Elige un simulador o "My Mac (Mac Catalyst)" y ⌘R.
