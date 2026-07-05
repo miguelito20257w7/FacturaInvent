@@ -42,3 +42,14 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Entregables v2: viven en sus propios repositorios
+# (FacturaInventV2-Backend, FacturaInventv2-iOS, facturainvent_flutter)
+backend/
+FacturaInventV2/
+facturainvent_flutter/
+
+# Exports de datos para la migración v2 (datos del negocio, no van a git)
+*.store
+*.store-shm
+*.store-wal
